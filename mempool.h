@@ -20,6 +20,6 @@ typedef struct transaction_encoding {
 extern trans_encoding * new_list();
 extern void list_insert(trans_encoding *list, unsigned int TID, char *payer, char *payee, unsigned int amount, unsigned int fee);
 extern void list_remove(trans_encoding *list, unsigned int TID);
-extern void walk_list(trans_encoding *list, int total_bytes, unsigned int signature);
-extern int transactions_count(trans_encoding *list, int total_bytes);
+extern void walk_list(trans_encoding *list, unsigned long total_bytes, unsigned int signature);
+extern int transactions_count(trans_encoding *list, unsigned long total_bytes);
 #endif //MINER_MEMPOOL_H

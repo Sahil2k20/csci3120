@@ -4,14 +4,12 @@
 #include "siggen.h"
 #include "mempool.h"
 
-#define BITS (sizeof(int) * 8)
-
 int main() {
     trans_encoding *list = new_list();
     char input[4], payer[31], payee[31];
     unsigned int TID, amount, fee;
     unsigned int ID=0, prevID=0, prevSig, T, signature, full_signature=0, nonce;
-    int total_bytes;
+    unsigned long total_bytes;
 
     while (strcmp(input, "END") != 0) {
         scanf("%s", input);
@@ -25,7 +23,7 @@ int main() {
 
         if (strcmp(input, "MINE") == 0) {
             int i = 0, t=0;
-            unsigned  int msb = 0xff000000;
+            unsigned int msb = 0xff000000;
 
             nonce = 0;
             signature = siggen_new();              // start a new signature
@@ -34,7 +32,7 @@ int main() {
             if (ID != 1) {
                 prevID += 1;
             }
-            prevSig = signature;
+            prevSig = full_signature;
             // id, prevID, prevSig
             total_bytes = 4 + 4 + 4;
             // nonce, signature
@@ -50,12 +48,6 @@ int main() {
             printf("Block mined: %d %d 0x%.8x %d\n", ID, prevID, prevSig, i);
 
             walk_list(list, total_bytes, signature);
-
-            // remove transactions in block from the list
-            while (t <= i) {
-                list_remove(list, TID);
-                t += 1;
-            }
 
             full_signature = siggen_int(signature, nonce);
             // while msb of signature is 1

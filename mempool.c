@@ -14,7 +14,7 @@ extern trans_encoding * new_list() {
     return list;
 }
 
-extern void walk_list(trans_encoding *list, int total_bytes, unsigned int signature) {
+extern void walk_list(trans_encoding *list, unsigned long total_bytes, unsigned int signature) {
     node_t *node = list->head;
     while (total_bytes <= 256 && node != NULL) {
         // Print transaction
@@ -30,12 +30,14 @@ extern void walk_list(trans_encoding *list, int total_bytes, unsigned int signat
         signature = siggen_int(signature, node->amount);
         signature = siggen_int(signature, node->fee);
 
+        list_remove(list, node->TID);
+
         // Move to next transaction in list
         node = node->next;
     }
 }
 
-extern int transactions_count(trans_encoding *list, int total_bytes) {
+extern int transactions_count(trans_encoding *list, unsigned long total_bytes) {
     node_t *node = list->head;
     int i = 0;
     while (total_bytes <= 256 && node != NULL) {
@@ -51,11 +53,11 @@ extern int transactions_count(trans_encoding *list, int total_bytes) {
 }
 
 extern void list_remove(trans_encoding *list, unsigned int TID) {
-    node_t *node = list->head, *head = list->head, *prev;
+    node_t *node = list->head, *head, *prev;
     // Delete head node
     if (node != NULL && node->TID == TID) {
-        head = head->next; // Changed head
-        free(node); // free old head
+        head = node->next; // Changed head
+        free(head); // free old head
         return;
     }
     while (node != NULL && node->TID != TID) {
