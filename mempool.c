@@ -30,6 +30,17 @@ extern void walk_list(trans_encoding *list, unsigned long total_bytes, unsigned 
         signature = siggen_int(signature, node->amount);
         signature = siggen_int(signature, node->fee);
 
+
+        // Move to next transaction in list
+        node = node->next;
+    }
+}
+
+extern void remove_transactions(trans_encoding *list, unsigned long total_bytes) {
+    node_t *node = list->head;
+    while (total_bytes <= 256 && node != NULL) {
+        total_bytes = total_bytes + 4 + (strlen(node->payee) + 1) + (strlen(node->payer) + 1) + 4 + 4;
+
         list_remove(list, node->TID);
 
         // Move to next transaction in list
@@ -53,11 +64,11 @@ extern int transactions_count(trans_encoding *list, unsigned long total_bytes) {
 }
 
 extern void list_remove(trans_encoding *list, unsigned int TID) {
-    node_t *node = list->head, *head, *prev;
+    node_t *node = list->head, *prev;
     // Delete head node
     if (node != NULL && node->TID == TID) {
-        head = node->next; // Changed head
-        free(head); // free old head
+        list->head = node->next; // Changed head
+        free(node); // free old head
         return;
     }
     while (node != NULL && node->TID != TID) {

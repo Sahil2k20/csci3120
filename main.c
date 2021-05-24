@@ -18,7 +18,6 @@ int main() {
             scanf("%u %s %s %u %u", &TID, payer, payee, &amount, &fee);
             list_insert(list, TID, payer, payee, amount, fee);
             printf("Adding transaction: %u %s %s %u %u\n", TID, payer, payee, amount, fee);
-            //print_list(list);
         }
 
         if (strcmp(input, "MINE") == 0) {
@@ -26,13 +25,15 @@ int main() {
             unsigned int msb = 0xff000000;
 
             nonce = 0;
-            signature = siggen_new();              // start a new signature
 
             ID += 1;
             if (ID != 1) {
                 prevID += 1;
             }
-            prevSig = full_signature;
+
+            prevSig = signature;
+
+
             // id, prevID, prevSig
             total_bytes = 4 + 4 + 4;
             // nonce, signature
@@ -40,6 +41,7 @@ int main() {
 
             i = transactions_count(list, total_bytes);
 
+            signature = siggen_new();              // start a new signature
             signature = siggen_int(signature, ID);
             signature = siggen_int(signature, prevID);
             signature = siggen_int(signature, prevSig);
@@ -48,6 +50,8 @@ int main() {
             printf("Block mined: %d %d 0x%.8x %d\n", ID, prevID, prevSig, i);
 
             walk_list(list, total_bytes, signature);
+
+            remove_transactions(list, total_bytes);
 
             full_signature = siggen_int(signature, nonce);
             // while msb of signature is 1
@@ -58,6 +62,7 @@ int main() {
 
             total_bytes = 0;
             printf("0x%.8x 0x%.8x\n", nonce, full_signature);
+            signature = full_signature;
         }
 
         if (strcmp(input, "BLK") == 0) {

@@ -22,4 +22,5 @@ extern void list_insert(trans_encoding *list, unsigned int TID, char *payer, cha
 extern void list_remove(trans_encoding *list, unsigned int TID);
 extern void walk_list(trans_encoding *list, unsigned long total_bytes, unsigned int signature);
 extern int transactions_count(trans_encoding *list, unsigned long total_bytes);
+extern void remove_transactions(trans_encoding *list, unsigned long total_bytes);
 #endif //MINER_MEMPOOL_H
